@@ -60,7 +60,7 @@ This project framework provides examples for the following services:
   </tr>
   <tr>
     <td>CUSTOMSEARCH_SEARCH_CONFIG</td>
-    <td>You can set up the search config [here](https://www.customsearch.ai)</td>
+    <td>You can set up the search config <a href="https://www.customsearch.ai">here</a></td>
   </tr>
   <tr>
     <td>3</td>
@@ -112,7 +112,7 @@ This project framework provides examples for the following services:
   </tr>
   <tr>
     <td>CONTENTMODERATOR_TEAM_NAME</td>
-    <td>You can create and get the team name [here](http://contentmoderator.cognitive.microsoft.com/)</td>
+    <td>You can create and get the team name <a href="http://contentmoderator.cognitive.microsoft.com/">here</a></td>
   </tr>
 </table>
 
