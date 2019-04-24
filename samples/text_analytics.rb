@@ -2,78 +2,168 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 
-require 'net/https'
-require 'uri'
-require 'json'
+require 'azure_cognitiveservices_textanalytics'
 
-class TextAnalyticsClient
-  @@accessKey
-  @@uri
-  def initialize(accessKey, uri)
-    @@accessKey = accessKey
-    @@uri = uri
-  end
+include Azure::CognitiveServices::TextAnalytics::V2_1::Models
 
-  def SendRequest(path, documents)
-    uri = URI(@@uri + path)
+credentials =
+    MsRestAzure::CognitiveServicesCredentials.new("enter key here")
+# Replace 'westus' with the correct region for your Text Analytics subscription
+endpoint = String.new("https://westus.api.cognitive.microsoft.com/")
 
-    puts 'Please wait a moment for the results to appear.'
+textAnalyticsClient =
+    Azure::TextAnalytics::Profiles::Latest::Client.new({
+                                                           credentials: credentials
+                                                       })
+textAnalyticsClient.endpoint = endpoint
 
-    request = Net::HTTP::Post.new(uri)
-    request['Content-Type'] = "application/json"
-    request['Ocp-Apim-Subscription-Key'] = @@accessKey
-    request.body = documents.to_json
+def SentimentAnalysisExample(client)
+  # The documents to be analyzed. Add the language of the document. The ID can be any value.
+  input_1 = MultiLanguageInput.new
+  input_1.id = '1'
+  input_1.language = 'en'
+  input_1.text = 'I had the best day of my life.'
 
-    response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
-        http.request (request)
+  input_2 = MultiLanguageInput.new
+  input_2.id = '2'
+  input_2.language = 'en'
+  input_2.text = 'This was a waste of my time. The speaker put me to sleep.'
+
+  input_3 = MultiLanguageInput.new
+  input_3.id = '3'
+  input_3.language = 'es'
+  input_3.text = 'No tengo dinero ni nada que dar...'
+
+  input_4 = MultiLanguageInput.new
+  input_4.id = '4'
+  input_4.language = 'it'
+  input_4.text = "L'hotel veneziano era meraviglioso. È un bellissimo pezzo di architettura."
+
+  input_documents = MultiLanguageBatchInput.new
+  input_documents.documents = [input_1, input_2, input_3, input_4]
+
+  result = client.sentiment(
+      multi_language_batch_input: input_documents
+  )
+
+  if (!result.nil? && !result.documents.nil? && result.documents.length > 0)
+    result.documents.each do |document|
+      puts "Document Id: #{document.id}: Sentiment Score: #{document.score}"
     end
-
-    puts JSON::pretty_generate (JSON (response.body))
   end
 end
 
-def Detect_Language(textAnalyticsClient)
-  documents = { 'documents': [
-    { 'id' => '1', 'text' => 'This is a document written in English.' },
-    { 'id' => '2', 'text' => 'Este es un document escrito en Español.' },
-    { 'id' => '3', 'text' => '这是一个用中文写的文件' }
-  ]}
-  path = 'languages'
-  textAnalyticsClient.SendRequest(path, documents)
+def DetectLanguageExample(client)
+  # The documents to be analyzed.
+  language_input_1 = LanguageInput.new
+  language_input_1.id = '1'
+  language_input_1.text = 'This is a document written in English.'
+
+  language_input_2 = LanguageInput.new
+  language_input_2.id = '2'
+  language_input_2.text = 'Este es un document escrito en Español..'
+
+  language_input_3 = LanguageInput.new
+  language_input_3.id = '3'
+  language_input_3.text = '这是一个用中文写的文件'
+
+  input_documents = LanguageBatchInput.new
+  input_documents.documents = [language_input_1, language_input_2, language_input_3]
+
+
+  result = client.detect_language(
+      language_batch_input: input_documents
+  )
+
+  if (!result.nil? && !result.documents.nil? && result.documents.length > 0)
+    puts '===== LANGUAGE DETECTION ====='
+    result.documents.each do |document|
+      puts "Document ID: #{document.id} , Language: #{document.detected_languages[0].name}"
+    end
+  else
+    puts 'No results data..'
+  end
 end
 
-def Analyze_Sentiment(textAnalyticsClient)
-  documents = { 'documents': [
-    { 'id' => '1', 'language' => 'en', 'text' => 'I really enjoy the new XBox One S. It has a clean look, it has 4K/HDR resolution and it is affordable.' },
-    { 'id' => '2', 'language' => 'es', 'text' => 'Este ha sido un dia terrible, llegué tarde al trabajo debido a un accidente automobilistico.' }
-  ]}
-  path = 'sentiment'
-  textAnalyticsClient.SendRequest(path, documents)
+def RecognizeEntitiesExample(client)
+  # The documents to be analyzed.
+  input_1 = MultiLanguageInput.new
+  input_1.id = '1'
+  input_1.language = 'en'
+  input_1.text = 'Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975, to develop and sell BASIC interpreters for the Altair 8800.'
+
+  input_2 = MultiLanguageInput.new
+  input_2.id = '2'
+  input_2.language = 'es'
+  input_2.text = 'La sede principal de Microsoft se encuentra en la ciudad de Redmond, a 21 kilómetros de Seattle.'
+
+  input_documents = MultiLanguageBatchInput.new
+  input_documents.documents = [input_1, input_2]
+
+  result = client.entities(
+      multi_language_batch_input: input_documents
+  )
+
+  if (!result.nil? && !result.documents.nil? && result.documents.length > 0)
+    puts '===== ENTITY RECOGNITION ====='
+    result.documents.each do |document|
+      puts "Document ID: #{document.id}"
+      document.entities.each do |entity|
+        puts "\tName: #{entity.name}, \tType: #{entity.type == nil ? "N/A" : entity.type},\tSub-Type: #{entity.sub_type == nil ? "N/A" : entity.sub_type}"
+        entity.matches.each do |match|
+          puts "\tOffset: #{match.offset}, \Length: #{match.length},\tScore: #{match.entity_type_score}"
+        end
+        puts
+      end
+    end
+  else
+    puts 'No results data..'
+  end
 end
 
-def Extract_KeyPhrases(textAnalyticsClient)
-  documents = { 'documents': [
-    { 'id' => '1', 'language' => 'en', 'text' => 'I really enjoy the new XBox One S. It has a clean look, it has 4K/HDR resolution and it is affordable.' },
-    { 'id' => '2', 'language' => 'es', 'text' => 'Si usted quiere comunicarse con Carlos, usted debe de llamarlo a su telefono movil. Carlos es muy responsable, pero necesita recibir una notificacion si hay algun problema.' },
-    { 'id' => '3', 'language' => 'en', 'text' => 'The Grand Hotel is a new hotel in the center of Seattle. It earned 5 stars in my review, and has the classiest decor I\'ve ever seen.' },
-  ]}
-  path = 'keyphrases'
-  textAnalyticsClient.SendRequest(path, documents)
+def KeyPhraseExtractionExample(client)
+  # The documents to be analyzed.
+  input_1 = MultiLanguageInput.new
+  input_1.id = '1'
+  input_1.language = 'ja'
+  input_1.text = '猫は幸せ'
+
+  input_2 = MultiLanguageInput.new
+  input_2.id = '2'
+  input_2.language = 'de'
+  input_2.text = 'Fahrt nach Stuttgart und dann zum Hotel zu Fu.'
+
+  input_3 = MultiLanguageInput.new
+  input_3.id = '3'
+  input_3.language = 'en'
+  input_3.text = 'My cat is stiff as a rock.'
+
+  input_4 = MultiLanguageInput.new
+  input_4.id = '4'
+  input_4.language = 'es'
+  input_4.text = 'A mi me encanta el fútbol!'
+
+  input_documents = MultiLanguageBatchInput.new
+  input_documents.documents = [input_1, input_2, input_3, input_4]
+
+  result = client.key_phrases(
+      multi_language_batch_input: input_documents
+  )
+
+  if (!result.nil? && !result.documents.nil? && result.documents.length > 0)
+    result.documents.each do |document|
+      puts "Document Id: #{document.id}"
+      puts '  Key Phrases'
+      document.key_phrases.each do |key_phrase|
+        puts "    #{key_phrase}"
+      end
+    end
+  else
+    puts 'No results data..'
+  end
 end
 
-def Recognize_Entities(textAnalyticsClient)
-  documents = { 'documents': [
-    { 'id' => '1', 'language' => 'en', 'text' => 'Microsoft is an It company.' }
-  ]}
-  path = 'entities'
-  textAnalyticsClient.SendRequest(path, documents)
-end
-
-accessKey = String.new("enter key here")
-uri = String.new("https://westus.api.cognitive.microsoft.com/text/analytics/v2.1/")
-textAnalyticsClient = TextAnalyticsClient.new(accessKey, uri)
-
-Detect_Language(textAnalyticsClient)
-Analyze_Sentiment(textAnalyticsClient)
-Extract_KeyPhrases(textAnalyticsClient)
-Recognize_Entities(textAnalyticsClient)
+SentimentAnalysisExample(textAnalyticsClient)
+DetectLanguageExample(textAnalyticsClient)
+RecognizeEntitiesExample(textAnalyticsClient)
+KeyPhraseExtractionExample(textAnalyticsClient)
