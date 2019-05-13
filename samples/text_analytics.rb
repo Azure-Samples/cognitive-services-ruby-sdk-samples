@@ -3,7 +3,7 @@ require 'azure_cognitiveservices_textanalytics'
 include Azure::CognitiveServices::TextAnalytics::V2_1::Models
 
 class TextAnalyticsClient
-  @@textAnalyticsClient
+  @textAnalyticsClient
 
   def initialize(endpoint, key)
     credentials =
@@ -11,14 +11,14 @@ class TextAnalyticsClient
 
     endpoint = String.new(endpoint)
 
-    @@textAnalyticsClient = Azure::TextAnalytics::Profiles::Latest::Client.new({
+    @textAnalyticsClient = Azure::TextAnalytics::Profiles::Latest::Client.new({
         credentials: credentials
     })
-    @@textAnalyticsClient.endpoint = endpoint
+    @textAnalyticsClient.endpoint = endpoint
   end
 
   def AnalyzeSentiment(inputDocuments)
-    result = @@textAnalyticsClient.sentiment(
+    result = @textAnalyticsClient.sentiment(
         multi_language_batch_input: inputDocuments
     )
 
@@ -32,7 +32,7 @@ class TextAnalyticsClient
   end
 
   def DetectLanguage(inputDocuments)
-    result = @@textAnalyticsClient.detect_language(
+    result = @textAnalyticsClient.detect_language(
         language_batch_input: inputDocuments
     )
 
@@ -48,7 +48,7 @@ class TextAnalyticsClient
   end
 
   def RecognizeEntities(inputDocuments)
-    result = @@textAnalyticsClient.entities(
+    result = @textAnalyticsClient.entities(
         multi_language_batch_input: inputDocuments
     )
 
@@ -71,7 +71,7 @@ class TextAnalyticsClient
   end
 
   def ExtractKeyPhrases(inputDocuments)
-    result = @@textAnalyticsClient.key_phrases(
+    result = @textAnalyticsClient.key_phrases(
         multi_language_batch_input: inputDocuments
     )
 
