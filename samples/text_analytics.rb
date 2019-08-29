@@ -91,10 +91,21 @@ class TextAnalyticsClient
   end
 end
 
-# Replace 'westus' with the correct region for your Text Analytics subscription
-endpoint = "https://westus.api.cognitive.microsoft.com/"
-key = "enter key here"
-client = TextAnalyticsClient.new(endpoint, key)
+key_var = "TEXT_ANALYTICS_SUBSCRIPTION_KEY"
+if (!ENV[key_var])
+    raise "Please set/export the following environment variable: " + key_var
+else
+    subscription_key = ENV[key_var]
+end
+
+endpoint_var = "TEXT_ANALYTICS_ENDPOINT"
+if (!ENV[endpoint_var])
+    raise "Please set/export the following environment variable: " + endpoint_var
+else
+    endpoint = ENV[endpoint_var]
+end
+
+client = TextAnalyticsClient.new(endpoint, subscription_key)
 
 def SentimentAnalysisExample(client)
   # The documents to be analyzed. Add the language of the document. The ID can be any value.
