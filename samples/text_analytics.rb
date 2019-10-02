@@ -1,10 +1,11 @@
+# <includeStatement>
 require 'azure_cognitiveservices_textanalytics'
-
 include Azure::CognitiveServices::TextAnalytics::V2_1::Models
+# </includeStatement>
 
 class TextAnalyticsClient
   @textAnalyticsClient
-
+  # <initialize> 
   def initialize(endpoint, key)
     credentials =
         MsRestAzure::CognitiveServicesCredentials.new(key)
@@ -16,7 +17,8 @@ class TextAnalyticsClient
     })
     @textAnalyticsClient.endpoint = endpoint
   end
-
+  # </initialize>
+  # <analyzeSentiment>
   def AnalyzeSentiment(inputDocuments)
     result = @textAnalyticsClient.sentiment(
         multi_language_batch_input: inputDocuments
@@ -30,7 +32,8 @@ class TextAnalyticsClient
     end
     puts ''
   end
-
+  # </analyzeSentiment>
+  # <detectLanguage>
   def DetectLanguage(inputDocuments)
     result = @textAnalyticsClient.detect_language(
         language_batch_input: inputDocuments
@@ -46,7 +49,8 @@ class TextAnalyticsClient
     end
     puts ''
   end
-
+  # </detectLanguage>
+  # <recognizeEntities>
   def RecognizeEntities(inputDocuments)
     result = @textAnalyticsClient.entities(
         multi_language_batch_input: inputDocuments
@@ -69,7 +73,9 @@ class TextAnalyticsClient
     end
     puts ''
   end
-
+  # </recognizeEntites>
+  
+  # <extractKeyPhrases>
   def ExtractKeyPhrases(inputDocuments)
     result = @textAnalyticsClient.key_phrases(
         multi_language_batch_input: inputDocuments
@@ -89,8 +95,10 @@ class TextAnalyticsClient
     end
     puts ''
   end
+  # </extractKeyPhrases>
 end
 
+# <vars>
 key_var = "TEXT_ANALYTICS_SUBSCRIPTION_KEY"
 if (!ENV[key_var])
     raise "Please set/export the following environment variable: " + key_var
@@ -104,9 +112,13 @@ if (!ENV[endpoint_var])
 else
     endpoint = ENV[endpoint_var]
 end
+# <vars>
 
+# <clientCreation>
 client = TextAnalyticsClient.new(endpoint, subscription_key)
+# </clientCreation>
 
+# <sentimentCall>
 def SentimentAnalysisExample(client)
   # The documents to be analyzed. Add the language of the document. The ID can be any value.
   input_1 = MultiLanguageInput.new
@@ -134,7 +146,8 @@ def SentimentAnalysisExample(client)
 
   client.AnalyzeSentiment(inputDocuments)
 end
-
+# </sentimentCall>
+# <detectLanguageCall>
 def DetectLanguageExample(client)
  # The documents to be analyzed.
  language_input_1 = LanguageInput.new
@@ -154,7 +167,8 @@ def DetectLanguageExample(client)
 
  client.DetectLanguage(language_batch_input)
 end
-
+# </detectLanguageCall>
+# <recognizeEntitiesCall>
 def RecognizeEntitiesExample(client)
   # The documents to be analyzed.
   input_1 = MultiLanguageInput.new
@@ -172,7 +186,9 @@ def RecognizeEntitiesExample(client)
 
   client.RecognizeEntities(multi_language_batch_input)
 end
+# </recognizeEntitiesCall>
 
+# <keyPhrasesCall>
 def KeyPhraseExtractionExample(client)
   # The documents to be analyzed.
   input_1 = MultiLanguageInput.new
