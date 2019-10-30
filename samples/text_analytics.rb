@@ -112,7 +112,7 @@ if (!ENV[endpoint_var])
 else
     endpoint = ENV[endpoint_var]
 end
-# <vars>
+# </vars>
 
 # <clientCreation>
 client = TextAnalyticsClient.new(endpoint, subscription_key)
