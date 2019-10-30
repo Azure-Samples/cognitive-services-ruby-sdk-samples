@@ -73,7 +73,7 @@ class TextAnalyticsClient
     end
     puts ''
   end
-  # </recognizeEntites>
+  # </recognizeEntities>
   
   # <extractKeyPhrases>
   def ExtractKeyPhrases(inputDocuments)
@@ -216,7 +216,7 @@ def KeyPhraseExtractionExample(client)
 
   client.ExtractKeyPhrases(input_documents)
 end
-
+# </keyPhrasesCall>
 DetectLanguageExample(client)
 SentimentAnalysisExample(client)
 RecognizeEntitiesExample(client)
