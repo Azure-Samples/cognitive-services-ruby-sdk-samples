@@ -73,7 +73,7 @@ class TextAnalyticsClient
     end
     puts ''
   end
-  # </recognizeEntites>
+  # </recognizeEntities>
   
   # <extractKeyPhrases>
   def ExtractKeyPhrases(inputDocuments)
@@ -112,7 +112,7 @@ if (!ENV[endpoint_var])
 else
     endpoint = ENV[endpoint_var]
 end
-# <vars>
+# </vars>
 
 # <clientCreation>
 client = TextAnalyticsClient.new(endpoint, subscription_key)
@@ -216,7 +216,7 @@ def KeyPhraseExtractionExample(client)
 
   client.ExtractKeyPhrases(input_documents)
 end
-
+# </keyPhrasesCall>
 DetectLanguageExample(client)
 SentimentAnalysisExample(client)
 RecognizeEntitiesExample(client)
