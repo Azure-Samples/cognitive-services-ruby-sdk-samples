@@ -99,23 +99,12 @@ class TextAnalyticsClient
 end
 
 # <vars>
-key_var = "TEXT_ANALYTICS_SUBSCRIPTION_KEY"
-if (!ENV[key_var])
-    raise "Please set/export the following environment variable: " + key_var
-else
-    subscription_key = ENV[key_var]
-end
-
-endpoint_var = "TEXT_ANALYTICS_ENDPOINT"
-if (!ENV[endpoint_var])
-    raise "Please set/export the following environment variable: " + endpoint_var
-else
-    endpoint = ENV[endpoint_var]
-end
-# <vars>
+key = "<paste-your-text-analytics-key-here>"
+endpoint = "<paste-your-text-analytics-endpoint-here>"
+# </vars>
 
 # <clientCreation>
-client = TextAnalyticsClient.new(endpoint, subscription_key)
+client = TextAnalyticsClient.new(endpoint, key)
 # </clientCreation>
 
 # <sentimentCall>
