@@ -45,7 +45,7 @@ This project framework provides examples for the following services:
     bundle install
     ```
 
-1. Get a cognitive services API key with which to authenticate the SDK's calls. [Sign up here](https://azure.microsoft.com/en-us/services/cognitive-services/directory/) by navigating to the right service and acquiring an API key. You can get a trial key for **free** which will expire after 30 days.
+1. Get a cognitive services API key with which to authenticate the SDK's calls. [Create a new Azure account, and try Cognitive Services for free.](https://azure.microsoft.com/free/cognitive-services/)
 
 2. Set the following environment variables. You only need to set the environment variables for which you want to run the samples.
 
